@@ -13,3 +13,4 @@ deploy:
  local_dir: vue/dist
  on:
    branch: master
+
