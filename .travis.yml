@@ -4,7 +4,7 @@ node_js:
 
 cache: npm
 
-script: build.sh
+script: ./build.sh
 
 deploy:
  provider: pages
