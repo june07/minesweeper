@@ -1,0 +1,50 @@
+<template>
+  <div id="app">
+    <!--<img alt="Vue logo" src="./assets/logo.png">
+    <HelloWorld msg="Welcome to Your Vue.js App"/>-->
+    <Game :width="7" :percent="25" :show="false" :key="gameId"
+      @resetButtonEvent="reset()"
+    />
+  </div>
+</template>
+
+<script>
+import Game from './components/Game.vue'
+
+export default {
+  name: 'app',
+  components: {
+    Game
+  },
+  data: function() {
+    return {
+      gameId: this.uuidv4()
+    }
+  },
+  methods: {
+    reset() {
+      this.gameId = this.uuidv4();
+      return this.gameId;
+    },
+    // BEGIN https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+    uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+    // END
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
