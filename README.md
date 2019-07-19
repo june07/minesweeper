@@ -9,3 +9,4 @@ Otherwise I think it's pretty straight forward and an accurate attempt at the ga
 
 ![Game Gif](https://i.imgur.com/k2Bqlg0.gif)
 
+Hosted version here: [https://minesweeper.june07.com/](https://minesweeper.june07.com/)
