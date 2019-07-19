@@ -91,7 +91,7 @@
           left: -1,
           lefttop: -(width+1),
           top: -width,
-          righttop: -(width+1),
+          righttop: -(width-1),
           right: 1,
           rightbottom: width+1,
           bottom: width,
