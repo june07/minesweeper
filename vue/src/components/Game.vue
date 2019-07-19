@@ -2,7 +2,6 @@
   <div align="center">
     <div id="controlbar">
       <input type="button" id="resetButton" value="Reset" @click="$emit('resetButtonEvent')">
-      <label for="resetButton">Reset</label>
       <input type="checkbox" id="showCheckbox" v-model="mutableShow">
       <label for="showCheckbox">Show Mines</label>
     </div>
