@@ -68,7 +68,8 @@
         spaces: this.width*this.width,
         numberOfBombsToPlace: Math.floor((this.width*this.width)*(this.percent/100)),
         mutableShow: this.show,
-        exploded: false
+        exploded: false,
+        regions: null
       }
     },
     computed: {
@@ -85,7 +86,43 @@
         }
         return this.calculateAdjacencies(board);
       },
+      getRegionIndexes(region, width) {
+        switch (region) {
+          case 'top':
+            return new Array(width-2).fill().map((e, i) => {
+              return i+1;
+            }); break;
+          case 'right':
+            return new Array(width-2).fill().map((e, i) => {
+              return width*(i+2)-1;
+            }); break;
+          case 'left':
+            return new Array(width-2).fill().map((e, i) => {
+              return width*(i+1);
+            }); break;
+          case 'bottom':
+            return new Array(width-2).fill().map((e, i) => {
+              return width*width-(width-i-1);
+            }); break;
+          case 'topleftcorner': return 0; break;
+          case 'toprightcorner': return width-1; break;
+          case 'bottomleftcorner': return width*width-(width); break;
+          case 'bottomrightcorner': return width*width-1; break;
+        }
+      },
       calculateAdjacencies(board) {
+        let self = this;
+        function getPositionOffsetsForCell(cellIndex) {
+          if (self.regions.innerCells.find(cell => cell === cellIndex)) {
+            return positionOffsets;
+          } else {
+            let region = Object.entries(self.regions).filter(region => !region[0].match(/(outerCells|innerCells)/)).find(region => {
+              let regionCells = (region[1].cells instanceof Array) ? region[1].cells : [ region[1].cells ];
+              if (regionCells.find(cell => cell === cellIndex) !== undefined) return true;
+            });
+            return region[1].offsets;
+          }
+        }
         let width = Math.sqrt(board.length);
         let positionOffsets = {
           left: -1,
@@ -97,14 +134,54 @@
           bottom: width,
           leftbottom: width-1
         }
+        this.regions = {
+          top: {
+            cells: this.getRegionIndexes('top', width),
+            offsets: Object.fromEntries(Object.entries(positionOffsets).filter(e => !e[0].match(/(lefttop|top|righttop)/)))
+          },
+          right: {
+            cells: this.getRegionIndexes('right', width),
+            offsets: Object.fromEntries(Object.entries(positionOffsets).filter(e => !e[0].match(/(right|righttop|rightbottom)/)))
+          },
+          bottom: {
+            cells: this.getRegionIndexes('bottom', width),
+            offsets: Object.fromEntries(Object.entries(positionOffsets).filter(e => !e[0].match(/(rightbottom|bottom|leftbottom)/)))
+          },
+          left: {
+            cells: this.getRegionIndexes('left', width),
+            offsets: Object.fromEntries(Object.entries(positionOffsets).filter(e => !e[0].match(/(left|lefttop|leftbottom)/)))
+          },
+          topleftcorner: {
+            cells: this.getRegionIndexes('topleftcorner', width),
+            offsets: Object.fromEntries(Object.entries(positionOffsets).filter(e => !e[0].match(/(leftbottom|left|lefttop|top|righttop)/)))
+          },
+          toprightcorner: {
+            cells: this.getRegionIndexes('toprightcorner', width),
+            offsets: Object.fromEntries(Object.entries(positionOffsets).filter(e => !e[0].match(/(lefttop|top|righttop|right|rightbottom)/)))
+          },
+          bottomleftcorner: {
+            cells: this.getRegionIndexes('bottomleftcorner', width),
+            offsets: Object.fromEntries(Object.entries(positionOffsets).filter(e => !e[0].match(/(lefttop|left|leftbottom|bottom|rightbottom)/)))
+          },
+          bottomrightcorner: {
+            cells: this.getRegionIndexes('bottomrightcorner', width),
+            offsets: Object.fromEntries(Object.entries(positionOffsets).filter(e => !e[0].match(/(leftbottom|bottom|rightbottom|right|righttop)/)))
+          }
+        }
+        //let board = new Array(this.width*this.width).fill();
+        this.regions.outerCells = Object.values(this.regions).map(r => r.cells).flatMap(cell => cell).sort((a,b) => a-b);
+        this.regions.innerCells = board.map((cell, i) => this.regions.outerCells.find(i2 => i === i2) ? 0 : i).filter(cell => cell !== 0)
+        // Need to do this for each of the regions.  Thus I need to calculate the center region.
         board = board.flatMap((cell, index, cells) => {
-          let adjacents = 0;
-          Object.values(positionOffsets).map((offset, i) => {
-            let position = index + offset;
-            if (position >= 0 && position < board.length && cells[position] === 'o') {
-              adjacents++;
+          let adjacents = [],
+            positionOffsetsForCell = getPositionOffsetsForCell(index);
+
+          Object.entries(positionOffsetsForCell).map((offset, i, offsets) => {
+            let position = index + parseInt(offset[1]);
+            if (cells[position] === 'o') {
+              adjacents.push(offset);
             }
-            if (i === 7) return adjacents;
+            if (i === offsets.length-1) return adjacents;
           });
           return {
             value: cell,

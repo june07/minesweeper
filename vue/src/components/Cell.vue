@@ -1,12 +1,18 @@
 <template>
 	<div class="cell" v-bind:class="[grassClass, explodedClass]">
-		<div v-if="showing">
-			{{ adjacents }}
+		<div class="adjacentValue" v-if="showing">
+			{{ adjacents.length }}
 		</div>
 	</div>
 </template>
 <style>
+  div.adjacentValue {
+  	display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+  }
   div.cell {
+  	display: table;
     width: 30px;
     height: 30px;
   }
@@ -26,7 +32,7 @@
 		props: {
 			mine: String,
 			index: Number,
-			adjacents: Number
+			adjacents: Array
 		},
 		data: function() {
 			return {
