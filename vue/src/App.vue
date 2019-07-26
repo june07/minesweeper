@@ -2,8 +2,9 @@
   <div id="app">
     <!--<img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>-->
-    <Game :width="7" :percent="25" :show="false" :key="gameId"
+    <Game :width="difficulty" :percent="25" :show="false" :key="gameId"
       @resetButtonEvent="reset()"
+      @resetButtonEvent:difficulty="reset($event)"
     />
   </div>
 </template>
@@ -18,11 +19,13 @@ export default {
   },
   data: function() {
     return {
-      gameId: this.uuidv4()
+      gameId: this.uuidv4(),
+      difficulty: 7
     }
   },
   methods: {
-    reset() {
+    reset(event) {
+      if (event !== undefined) this.difficulty = parseInt(event)
       this.gameId = this.uuidv4();
       return this.gameId;
     },

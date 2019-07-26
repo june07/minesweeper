@@ -32,7 +32,8 @@
 		props: {
 			mine: String,
 			index: Number,
-			adjacents: Array
+			adjacents: Array,
+			adjacentCellIndexes: Array
 		},
 		data: function() {
 			return {
@@ -50,12 +51,7 @@
 		},
 		methods: {
 			reveal() {
-				if (this.mine === 'o') {
-					return false;
-				} else {
-					this.showing = !this.showing;
-					return true;
-				}
+				this.showing = true;
 			},
 			explode() {
 				if (this.mine === 'o') {

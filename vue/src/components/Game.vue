@@ -2,6 +2,7 @@
   <div align="center">
     <div id="controlbar">
       <input type="button" id="resetButton" value="Reset" @click="$emit('resetButtonEvent')">
+      <input type="text" size="1" id="difficulty" value="width" v-model="mutableDifficulty" @change="$emit('resetButtonEvent:difficulty', mutableDifficulty)">
       <input type="checkbox" id="showCheckbox" v-model="mutableShow">
       <label for="showCheckbox">Show Mines</label>
     </div>
@@ -16,6 +17,7 @@
               :mine="cell.value"
               :index="cell.index"
               :adjacents="cell.adjacents"
+              :adjacentCellIndexes="cell.adjacentCellIndexes"
               @click.native="clickHandler"
             />
           </td>
@@ -53,6 +55,18 @@
 
   let CellClass = Vue.extend(Cell);
 
+  Array.prototype.unique = function() {
+        var a = this.concat();
+        for(var i=0; i<a.length; ++i) {
+            for(var j=i+1; j<a.length; ++j) {
+                if(a[i] === a[j])
+                    a.splice(j--, 1);
+            }
+        }
+
+        return a;
+      };
+
   export default {
     name: 'gameboard',
     components: {
@@ -68,8 +82,10 @@
         spaces: this.width*this.width,
         numberOfBombsToPlace: Math.floor((this.width*this.width)*(this.percent/100)),
         mutableShow: this.show,
+        mutableDifficulty: this.width,
         exploded: false,
-        regions: null
+        regions: null,
+        revealed: []
       }
     },
     computed: {
@@ -174,6 +190,7 @@
         // Need to do this for each of the regions.  Thus I need to calculate the center region.
         board = board.flatMap((cell, index, cells) => {
           let adjacents = [],
+            adjacentCellIndexes = [],
             positionOffsetsForCell = getPositionOffsetsForCell(index);
 
           Object.entries(positionOffsetsForCell).map((offset, i, offsets) => {
@@ -181,11 +198,13 @@
             if (cells[position] === 'o') {
               adjacents.push(offset);
             }
+            adjacentCellIndexes.push(position);
             if (i === offsets.length-1) return adjacents;
           });
           return {
             value: cell,
-            adjacents
+            adjacents,
+            adjacentCellIndexes
           };
         });
         return board;
@@ -216,12 +235,20 @@
       explodeAllMines() {
         Array.from(document.querySelectorAll('div.cell')).map(e => e.__vue__.explode());
       },
-      reveal(cell) {  
-        if (! cell.reveal()) {
+      reveal(cell, adjacentCell) {
+        let self = this;
+        cell.reveal();
+        if (cell.mine === 'o') {
           this.explodeAllMines();
           this.mutableShow = true;
           console.log('You lose.');
-        } else {
+        } else if (cell.mine === 'x' && cell.adjacents.length === 0) {
+          cell.adjacentCellIndexes.forEach(cellIndex => {
+            if (self.revealed.find(index => index === cellIndex) === undefined) {
+              self.revealed.push(cellIndex);
+              self.reveal(self.getCellByIndex(cellIndex), cellIndex);
+            }      
+          });
           // Uncover adjacent mines 
         }
       }
