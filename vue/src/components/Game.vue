@@ -1,80 +1,86 @@
 <template>
-  <div align="center" v-bind:class="[ gameResultClass ]">
-    <div id="controlbar">
-      <v-text-field
-        outlined
-        label="width/height"
-        placeholder="10"
-        id="difficulty"
-        value="width"
-        v-model="mutableDifficulty"
-        @change="$emit('resetButtonEvent:difficulty', mutableDifficulty)" />
-      <v-text-field
-        outlined
-        label="bomb percentage"
-        placeholder="50%"
-        id="percentage"
-        value="percent"
-        v-model="mutablePercentage"
-        @change="$emit('resetButtonEvent:percent', mutablePercentage)"/>
-      <!--
-      <v-checkbox
-        id="showCheckbox"
-        v-model="mutableShow" tooltip/>
-      <v-btn
-        id="resetButton"
-        large
-        outlined
-        @click="$emit('resetButtonEvent')">RESET</v-btn>
-      -->
-    </div>
-    <div id="stats">
-      <v-chip
-        label
-        outlined
-        color="green"
-      >
-        <v-icon left color="green">mdi-square</v-icon>
-        {{ this.spaces }}
-      </v-chip>
-      <v-chip
-        label
-        outlined
-        color="red"
-      >
-        <v-icon left>mdi-bomb</v-icon>
-        {{ this.numberOfBombsToPlace }}
-      </v-chip>
-    </div>
-    <div id="gameboard" class="gameboard">
-      <table v-bind:class="['game', lose ? 'isNotClickable' : '']">
-        <tbody>
-          <tr v-for="(row, rowIndex) in initializedGameBoard" :key="row.id">
-            <td v-for="cell in row" :key="cell.id">
-              <div v-if="mutableShow">
-                <span class="secret">{{ cell.value }}</span>
-              </div>
-              <Cell
-                :width="width"
-                :row="rowIndex"
-                :mine="cell.value"
-                :index="cell.index"
-                :adjacents="cell.adjacents"
-                :adjacentCellIndexes="cell.adjacentCellIndexes"
-                @click.native="clickHandler"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <div align="center">
+    <v-overlay
+      :value="lose"
+    >
       <div id="reset-control" v-if="lose">
+          <v-btn
+          id="resetButton"
+          large
+          outlined
+          @click="$emit('resetButtonEvent')">RESET</v-btn>
+        </div>
+    </v-overlay>
+    <div id="game">
+      <div id="controlbar">
+        <v-text-field
+          outlined
+          label="width/height"
+          placeholder="10"
+          id="difficulty"
+          value="width"
+          v-model="mutableDifficulty"
+          @change="$emit('resetButtonEvent:difficulty', mutableDifficulty)" />
+        <v-text-field
+          outlined
+          label="bomb percentage"
+          placeholder="50%"
+          id="percentage"
+          value="percent"
+          v-model="mutablePercentage"
+          @change="$emit('resetButtonEvent:percent', mutablePercentage)"/>
+        <!--
+        <v-checkbox
+          id="showCheckbox"
+          v-model="mutableShow" tooltip/>
         <v-btn
-        id="resetButton"
-        large
-        outlined
-        @click="$emit('resetButtonEvent')">RESET</v-btn>
+          id="resetButton"
+          large
+          outlined
+          @click="$emit('resetButtonEvent')">RESET</v-btn>
+        -->
       </div>
-      <Timer/>
+      <div id="stats">
+        <v-chip
+          label
+          outlined
+          color="green"
+        >
+          <v-icon left color="green">mdi-square</v-icon>
+          {{ this.spaces }}
+        </v-chip>
+        <v-chip
+          label
+          outlined
+          color="red"
+        >
+          <v-icon left>mdi-bomb</v-icon>
+          {{ this.numberOfBombsToPlace }}
+        </v-chip>
+      </div>
+      <div id="gameboard" class="gameboard">
+        <table v-bind:class="['game', lose ? 'isNotClickable' : '']">
+          <tbody>
+            <tr v-for="(row, rowIndex) in initializedGameBoard" :key="row.id">
+              <td v-for="cell in row" :key="cell.id">
+                <div v-if="mutableShow">
+                  <span class="secret">{{ cell.value }}</span>
+                </div>
+                <Cell
+                  :width="width"
+                  :row="rowIndex"
+                  :mine="cell.value"
+                  :index="cell.index"
+                  :adjacents="cell.adjacents"
+                  :adjacentCellIndexes="cell.adjacentCellIndexes"
+                  @click.native="clickHandler"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <Timer/>
+      </div>
     </div>
   </div>
 </template>
@@ -214,9 +220,6 @@
     computed: {
       initializedGameBoard: function() {
         return this.arrangeIntoRowsCols(this.randomlyMixBombs(this.numberOfBombsToPlace, this.spaces));
-      },
-      gameResultClass: function() {
-        return this.lose ? '' : '';
       }
     },
     methods: {
