@@ -2,9 +2,10 @@
   <div id="app">
     <!--<img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>-->
-    <Game :width="difficulty" :percent="25" :show="false" :key="gameId"
+    <Game :width="difficulty" :percent="percent" :show="false" :key="gameId"
       @resetButtonEvent="reset()"
-      @resetButtonEvent:difficulty="reset($event)"
+      @resetButtonEvent:difficulty="reset('difficulty', $event)"
+      @resetButtonEvent:percent="reset('percent', $event)"
     />
   </div>
 </template>
@@ -20,14 +21,23 @@ export default {
   data: function() {
     return {
       gameId: this.uuidv4(),
-      difficulty: 7
+      difficulty: 7,
+      percent: 25
     }
   },
   methods: {
-    reset(event) {
-      if (event !== undefined) this.difficulty = parseInt(event)
+    reset(setting, event) {
+      if (event !== undefined) {
+        setting === 'difficulty' ? this.difficulty = parseInt(this.validateDifficulty(event)) : this.percent = parseInt(this.validatePercent(event));
+      }
       this.gameId = this.uuidv4();
       return this.gameId;
+    },
+    validatePercent(value) {
+      return (isNaN(value) || value < 0 || value > 100) ? 0 : value;
+    },
+    validateDifficulty(value) {
+      return isNaN(value) || value < 2 ? 2 : value
     },
     // BEGIN https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
     uuidv4() {
