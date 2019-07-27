@@ -3,17 +3,17 @@ before_install:
   
 language: node_js
 node_js:
- - "node"
+  - "node"
 
 cache: npm
 
 script: ./build.sh
 
 deploy:
- provider: pages
- skip_cleanup: true
- github_token: $GITHUB_TOKEN
- local_dir: vue/dist
- on:
-   branch: master
-
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: vue/dist
+  on:
+    branch: master
+  fqdn: minesweeper.june07.com
