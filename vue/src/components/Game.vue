@@ -93,11 +93,19 @@
           </tbody>
         </table>
         <Timer/>
+        <div id="version">
+          version: {{ env.VUE_APP_TRAVIS_BUILD_VERSION }}
+        </div>
       </div>
     </div>
   </div>
 </template>
 <style>
+  #version {
+    font-style: italic;
+    color: lightgray;
+    margin: 50px;
+  }
   table {
     background-color: black;
     border-spacing: 0px;
@@ -218,6 +226,7 @@
     },
     data: function () {
       return {
+        env: process.env,
         spaces: this.width*this.width,
         numberOfBombsToPlace: Math.floor((this.width*this.width)*(this.percent/100)),
         mutableShow: this.show,
