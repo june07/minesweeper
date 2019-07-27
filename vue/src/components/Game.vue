@@ -3,13 +3,26 @@
     <v-overlay
       :value="lose"
     >
+      <div id="winner-message" class="display-4">Sorry, you lose.</div>
       <div id="reset-control" v-if="lose">
           <v-btn
           id="resetButton"
           large
           outlined
-          @click="$emit('resetButtonEvent')">RESET</v-btn>
+          @click="$emit('resetButtonEvent')">PLAY AGAIN</v-btn>
         </div>
+    </v-overlay>
+    <v-overlay
+      :value="won"
+    >
+      <div id="winner-message" class="display-4">Congratulations,  You won!</div>
+      <div id="reset-control" v-if="won">
+        <v-btn
+        id="resetButton"
+        large
+        outlined
+        @click="$emit('resetButtonEvent')">PLAY AGAIN</v-btn>
+      </div>
     </v-overlay>
     <div id="game">
       <div id="controlbar">
@@ -214,7 +227,8 @@
         regions: null,
         revealed: [],
         started: false,
-        lose: false
+        lose: false,
+        won: false
       }
     },
     computed: {
@@ -381,7 +395,11 @@
             }      
           });
           // Uncover adjacent mines 
+        } else if (cell.mine === 'x') {
+          self.revealed.push(cell.index);
         }
+        self.won = self.spaces - self.numberOfBombsToPlace === self.revealed.length ? true : false;
+        if (self.won) document.querySelector('#timer').__vue__.stop();
       }
     }
   };
