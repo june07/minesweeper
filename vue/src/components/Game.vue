@@ -3,6 +3,8 @@
     <div id="controlbar">
       <v-text-field
         outlined
+        label="width/height"
+        placeholder="10"
         id="difficulty"
         value="width"
         v-model="mutableDifficulty"

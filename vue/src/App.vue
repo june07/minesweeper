@@ -21,8 +21,8 @@ export default {
   data: function() {
     return {
       gameId: this.uuidv4(),
-      difficulty: 7,
-      percent: 25
+      difficulty: 12,
+      percent: 50
     }
   },
   methods: {
@@ -34,10 +34,10 @@ export default {
       return this.gameId;
     },
     validatePercent(value) {
-      return (isNaN(value) || value < 0 || value > 100) ? 0 : value;
+      return (value === "" || isNaN(value) || value < 0 || value > 100) ? 50 : value;
     },
     validateDifficulty(value) {
-      return isNaN(value) || value < 2 ? 2 : value
+      return (value === "" || isNaN(value) || value < 2) ? 12 : value
     },
     // BEGIN https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
     uuidv4() {
