@@ -396,7 +396,11 @@
           });
           // Uncover adjacent mines 
         } else if (cell.mine === 'x') {
-          self.revealed.push(cell.index);
+          let cellIndex = cell.index;
+          if (self.revealed.find(index => index === cellIndex) === undefined) {
+            self.revealed.push(cellIndex);
+              self.reveal(self.getCellByIndex(cellIndex), cellIndex);
+            }
         }
         self.won = self.spaces - self.numberOfBombsToPlace === self.revealed.length ? true : false;
         if (self.won) document.querySelector('#timer').__vue__.stop();
