@@ -3,9 +3,18 @@
         <div class="adjacentValue" v-if="showing">
             {{ adjacents.length }}
         </div>
+        <div class="flag" v-if="hasFlag">
+            <v-icon color="#B71C1C">mdi-flag-triangle</v-icon>
+        </div>
     </div>
 </template>
 <style>
+    .flag {
+        position: relative;
+        left: 0;
+        top: 0;
+        pointer-events: none;
+    }
   div.adjacentValue {
     display: table-cell;
     vertical-align: middle;
@@ -194,7 +203,8 @@
         data: function() {
             return {
                 showing: false,
-                exploded: false
+                exploded: false,
+                hasFlag: false
             }
         },
         computed: {
@@ -214,12 +224,16 @@
         },
         methods: {
             reveal() {
+                this.hasFlag = false;
                 this.showing = true;
             },
             explode() {
                 if (this.mine === 'o') {
                     this.exploded = true;
                 }
+            },
+            toggleFlag() {
+                this.hasFlag = !this.hasFlag;
             }
         }
     }

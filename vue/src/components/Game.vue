@@ -57,17 +57,17 @@
         <v-chip
           label
           outlined
-          color="green"
+          color="#4CAF50"
         >
-          <v-icon left color="green">mdi-square</v-icon>
+          <v-icon left>mdi-square</v-icon>
           {{ this.spaces }}
         </v-chip>
         <v-chip
           label
           outlined
-          color="red"
+          color="#B71C1C"
         >
-          <v-icon left>mdi-bomb</v-icon>
+          <v-icon left color="#000000">mdi-bomb</v-icon>
           {{ this.numberOfBombsToPlace }}
         </v-chip>
       </div>
@@ -87,6 +87,7 @@
                   :adjacents="cell.adjacents"
                   :adjacentCellIndexes="cell.adjacentCellIndexes"
                   @click.native="clickHandler"
+                  @click.native.right.prevent="rightClickHandler"
                 />
               </td>
             </tr>
@@ -384,6 +385,10 @@
         let cell = event.target;
         this.started ? '' : document.querySelector('#timer').__vue__.start();
         this.reveal(cell.__vue__);
+      },
+      rightClickHandler(event) {
+        let cell = event.target;
+        if (cell !== undefined && cell.__vue__ !== undefined) cell.__vue__.toggleFlag();
       },
       explodeAllMines() {
         Array.from(document.querySelectorAll('div.cell')).map(e => e.__vue__.explode());
