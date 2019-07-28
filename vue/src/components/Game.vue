@@ -95,7 +95,7 @@
         </table>
         <Timer/>
         <div id="version">
-          version: {{ env.VUE_APP_TRAVIS_TAG }}
+          version: {{ env.VUE_APP_VERSION }}
         </div>
       </div>
     </div>
